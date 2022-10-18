@@ -117,11 +117,7 @@ gunzip  solar-energy/solar_AL.txt.gz
 
 gunzip  traffic/traffic.txt.gz 
 
-
 python generate_training_data.py --ds_name data/electricity --output_dir data/electricity --dataset_filename data/electricity/electricity.txt 
-
-
-python train_multi_step.py --data ./data/electricity --model_name mtgnn --device cuda:0 --expid 3242 --epochs 100 --batch_size 64 --runs 10 --random_node_idx_split_runs 100 --lower_limit_random_node_selections 15 --upper_limit_random_node_selections 15 --step_size1 1000 --mask_remaining true
 
 python generate_training_data.py --ds_name data/solar-energy --output_dir data/solar-energy --dataset_filename data/solar-energy/solar_AL.txt
 
@@ -131,5 +127,23 @@ python generate_training_data.py --ds_name metr-la  --output_dir data/metr-la --
 
 
 
+
+python train_multi_step.py --data ./data/electricity --model_name mtgnn --device cuda:0 --expid 3242 --epochs 100 --batch_size 64 --runs 10 --random_node_idx_split_runs 100 --lower_limit_random_node_selections 15 --upper_limit_random_node_selections 15 --step_size1 1000 --mask_remaining true
+
+
+
 python train_multi_step.py --data ./data/traffic --model_name mtgnn --device cuda:0 --expid 3242 --epochs 100 --batch_size 64 --runs 10 --random_node_idx_split_runs 100 --lower_limit_random_node_selections 15 --upper_limit_random_node_selections 15 --step_size1 1000 --mask_remaining true
 ```
+
+| Datasets    | Description |
+| ----------- | ----------- |
+| Metr-La   | This dataset contains average traffic speed measured by 207 loop detectors on the highways of Los Angeles ranging from Mar 2012 to Jun 2012.|
+| Solar   |  This dataset contains the solar power output that was collected from 137 plants in Alabama State in 2007     |
+| Traffic | This dataset contains road occupancy rates that were measured by 862 sensors in San Francisco Bay area during 2015 and 2016 . Since the default scale of a substantial fraction of values is of the order of 1e −3, we upscale (multiply the variable values) by 1e3. |
+| ECG5000| This dataset from the UCR time-series Classification Archive consists of 140 electrocardiograms (ECG) with a length of 5000 each (we use it for the purpose of forecasting, as done by [5]). |
+| ----------- | ----------- |
+| ----------- | ----------- |
+
+
+
+

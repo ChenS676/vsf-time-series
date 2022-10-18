@@ -16,7 +16,7 @@ from scipy.sparse import linalg
 from torch.autograd import Variable
 import networkx as nx
 import time
-
+import plotly.express as px
 
 def normal_std(x):
     return x.std() * np.sqrt((len(x) - 1.)/(len(x)))
@@ -311,3 +311,38 @@ def obtain_discrepancy_from_neighs(preds, orig_neighs_forecasts, args, idx_curre
     distance = torch.absolute( (preds - orig_neighs_forecasts) / len_tensor ).view(preds.shape[0], args.num_neighbors_borrow, -1)
     distance = torch.mean(distance, dim=-1)
     return distance, orig_neighs_forecasts
+import pandas as pd
+
+def plot_seq(df: pd.DataFrame, ds_name: str):
+    """plot sequence data for visualization"""
+    # df = px.data.stocks()
+    # TODO transform the format 
+    if ds_name == "metr-la":
+        sensor_index = df.values.shape[1]
+    
+        df_dict = {}
+        for i in range(df.shape[1]):
+            df_dict.update({"Sensor" + str(i):  df.values[::10, i]}) 
+        # add index
+        df_dict.update({"index": np.arange(0, df.values[::10, i].shape[0])})
+        df1 = pd.DataFrame(data=df_dict, dtype=np.float64)
+
+
+        fig = px.line(df1, x= 'index', y="0",
+                    title=' average traffic speed')
+        # fig.update_xaxes(
+            # dtick="M1",
+            # tickformat="%b\n%Y",
+            # ticklabelmode="period")
+        fig.show()
+    
+    if ds_name == "electricity" or 'solar-energy':
+        fig = px.line(df, x=df.index, y=df.columns[:3],
+                    title=ds_name)
+        fig.show()
+
+    if ds_name == "traffic":
+        fig = px.line(df, x=df.index, y=df.columns[:3],
+                    title='traffic')
+        fig.show()
+    return 

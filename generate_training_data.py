@@ -15,7 +15,7 @@ import argparse
 import numpy as np
 import os
 import pandas as pd
-
+from util import plot_seq 
 
 def generate_graph_seq2seq_io_data(
         df, x_offsets, y_offsets, add_time_in_day=True, add_day_in_week=False, scaler=None
@@ -102,6 +102,7 @@ def generate_train_val_test(args):
         add_day_in_week=False,
     )
 
+    plot_seq(df, args.ds_name)
     print("x shape: ", x.shape, ", y shape: ", y.shape)
     # Write the data into npz file.
     # num_test = 6831, using the last 6831 examples as testing.
