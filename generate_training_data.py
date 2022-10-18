@@ -72,6 +72,16 @@ def generate_graph_seq2seq_io_data(
 def generate_train_val_test(args):
     if args.ds_name == "metr-la":
         df = pd.read_hdf(args.dataset_filename, key='df')
+    if args.ds_name == "Pems_Bay":
+        df = pd.read_hdf(args.dataset_filename, key='speed')
+        # import h5py 
+        # with h5py.File(args.dataset_filename, "r") as f:
+        #     # Print all root level object names (aka keys) 
+        #     # these can be group or dataset names 
+        #     print("Keys: %s" % f.keys())
+        #     a_group_key = list(f.keys())[0]
+        #     data = list(f[a_group_key])     
+
         # df = h5totxt(args.dataset_filename) 
     else:
         df = pd.read_csv(args.dataset_filename, delimiter = ",", header=None)

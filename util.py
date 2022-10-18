@@ -317,8 +317,7 @@ def plot_seq(df: pd.DataFrame, ds_name: str):
     """plot sequence data for visualization"""
     # df = px.data.stocks()
     # TODO transform the format 
-    if ds_name == "metr-la":
-        sensor_index = df.values.shape[1]
+    if ds_name == "metr-la" or "Pems_Bay":
     
         df_dict = {}
         for i in range(df.shape[1]):
@@ -341,8 +340,9 @@ def plot_seq(df: pd.DataFrame, ds_name: str):
                     title=ds_name)
         fig.show()
 
-    if ds_name == "traffic":
+    if ds_name == "traffic" or "ECG":
         fig = px.line(df, x=df.index, y=df.columns[:3],
-                    title='traffic')
+                    title=ds_name)
         fig.show()
+
     return 
