@@ -1,5 +1,10 @@
 Code for the paper - [Multi-Variate Time Series Forecasting on Variable Subsets]() accepted at KDD 2022 Research Track.
 
+
+# Download dataset 
+Multivariate time series datasets
+Download Solar-Energy, Traffic, Electricity, Exchange-rate datasets from https://github.com/laiguokun/multivariate-time-series-data. Uncompress them and move them to the data folder.
+
 # Running the model
 
 Datasets - METR-LA, SOLAR, TRAFFIC, ECG. This code provides a running example with all components on [MTGNN](https://github.com/nnzhan/MTGNN) model (we acknowledge the authors of the work).
@@ -105,4 +110,25 @@ keywords = {multivariate time series forecasting, variable subsets, partial infe
 location = {Washington DC, USA},
 series = {KDD '22}
 }
+```
+
+```
+gunzip  solar-energy/solar_AL.txt.gz
+
+gunzip  traffic/traffic.txt.gz 
+
+
+python generate_training_data.py --ds_name data/electricity --output_dir data/electricity --dataset_filename data/electricity/electricity.txt 
+
+
+python train_multi_step.py --data ./data/electricity --model_name mtgnn --device cuda:0 --expid 3242 --epochs 100 --batch_size 64 --runs 10 --random_node_idx_split_runs 100 --lower_limit_random_node_selections 15 --upper_limit_random_node_selections 15 --step_size1 1000 --mask_remaining true
+
+python generate_training_data.py --ds_name data/solar-energy --output_dir data/solar-energy --dataset_filename data/solar-energy/solar_AL.txt
+
+python generate_training_data.py --ds_name data/traffic  --output_dir data/traffic --dataset_filename data/traffic/traffic.txt
+
+python generate_training_data.py --ds_name data/metr-la  --output_dir data/metr-la --dataset_filename data/metr-la/metr-la.h5
+
+
+python train_multi_step.py --data ./data/traffic --model_name mtgnn --device cuda:0 --expid 3242 --epochs 100 --batch_size 64 --runs 10 --random_node_idx_split_runs 100 --lower_limit_random_node_selections 15 --upper_limit_random_node_selections 15 --step_size1 1000 --mask_remaining true
 ```
