@@ -127,7 +127,8 @@ python generate_training_data.py --ds_name data/solar-energy --output_dir data/s
 
 python generate_training_data.py --ds_name data/traffic  --output_dir data/traffic --dataset_filename data/traffic/traffic.txt
 
-python generate_training_data.py --ds_name data/metr-la  --output_dir data/metr-la --dataset_filename data/metr-la/metr-la.h5
+python generate_training_data.py --ds_name metr-la  --output_dir data/metr-la --dataset_filename data/metr-la/metr-la.h5
+
 
 
 python train_multi_step.py --data ./data/traffic --model_name mtgnn --device cuda:0 --expid 3242 --epochs 100 --batch_size 64 --runs 10 --random_node_idx_split_runs 100 --lower_limit_random_node_selections 15 --upper_limit_random_node_selections 15 --step_size1 1000 --mask_remaining true
