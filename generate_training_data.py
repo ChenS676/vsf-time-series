@@ -16,6 +16,7 @@ import numpy as np
 import os
 import pandas as pd
 from util import plot_seq 
+import h5py
 
 def generate_graph_seq2seq_io_data(
         df, x_offsets, y_offsets, add_time_in_day=True, add_day_in_week=False, scaler=None
@@ -67,7 +68,86 @@ def generate_graph_seq2seq_io_data(
     return x, y
 
 
+def kiglis2df(dataset_filename : str):
+    """Transform the single h5 file into dataframe for split and train script 
+    Originally, we have 30 independent samples with length 32768, for training script, we split the long sequence into subsequence with length 12 
+    Args:
+        args (Namespace): config parameters for dataloader and trainer, must contain arg.dataset_filename
 
+    Returns:
+        _type_: pandas.DataFrame with given index, values in numpy.array 
+        x, y : input and output sequence data in shape (num_len, len_seq=12, num_samples)
+    """
+    try:
+        df = pd.read_hdf(dataset_filename)
+    except:
+        x_data, y_data = [], []
+        # x: (input_length, input_dim, num_seq)
+        # y: (output_length, output_dim, num_seq) 
+        with h5py.File(dataset_filename, 'r') as f:
+            keys = list(f.keys())
+            for key in keys:
+                x_data.append(f[key]['mx_flt']['input']['signals']['0'][:].squeeze())
+                y_data.append(f[key]['mx_flt']['output']['signals']['0'][:].squeeze())
+    
+    x_data, y_data = np.swapaxes(np.array(x_data), 0, 1), np.swapaxes(np.array(y_data), 0, 1)
+    # 0 is the latest observed sample.
+    x_offsets = np.sort(
+        np.concatenate((np.arange(-11, 1, 1),))
+    )
+    num_samples = np.array(x_data).shape[0]
+    x, y = [], []
+    # t is the index of the last observation.
+    min_t = abs(min(x_offsets))
+    max_t = abs(num_samples - abs(max(x_offsets)))  # Exclusive
+    for t in range(min_t, max_t):
+        x_t = x_data[t + x_offsets, ...].astype(np.float32)
+        y_t = y_data[t + x_offsets, ...].astype(np.float32)
+        x.append(x_t)
+        y.append(y_t)
+    x = np.stack(x, axis=0).swapaxes(1, 2).reshape(-1, 12)
+    y = np.stack(y, axis=0).swapaxes(1, 2).reshape(-1, 12)
+
+    # create a df for plot 
+    df_dict = {}
+    df_dict.update({'x': x[0, :]})
+    df_dict.update({'y': y[0, :]})
+    df = pd.DataFrame(df_dict)
+    # save dataset into zip file 
+    plot_seq(df, args.ds_name)
+    print("x shape: ", x.shape, ", y shape: ", y.shape)
+    # Write the data into npz file.
+    # num_test = 6831, using the last 6831 examples as testing.
+    # for the rest: 7/8 is used for training, and 1/8 is used for validation.
+    num_samples = x.shape[0]
+    num_test = round(num_samples * 0.2)
+    num_train = round(num_samples * 0.7)
+    num_val = num_samples - num_test - num_train
+
+    # train
+    x_train, y_train = x[:num_train], y[:num_train]
+    # val
+    x_val, y_val = (
+        x[num_train: num_train + num_val],
+        y[num_train: num_train + num_val],
+    )
+    # test
+    x_test, y_test = x[-num_test:], y[-num_test:]
+
+    os.mkdir(args.output_dir)
+        
+    for cat in ["train", "val", "test"]:
+        _x, _y = locals()["x_" + cat], locals()["y_" + cat]
+        print(cat, "x: ", _x.shape, "y:", _y.shape)
+            
+        np.savez_compressed(
+            os.path.join(args.output_dir, "%s.npz" % cat),
+            x=_x,
+            y=_y,
+            x_offsets=x_offsets.reshape(list(x_offsets.shape) + [1]),
+            y_offsets=x_offsets.reshape(list(x_offsets.shape) + [1]),
+        )
+    return x, y
 
 def generate_train_val_test(args):
     if args.ds_name == "metr-la":
@@ -75,7 +155,8 @@ def generate_train_val_test(args):
     if args.ds_name == "Pems_Bay":
         df = pd.read_hdf(args.dataset_filename, key='speed')
     if args.ds_name == 'kiglis':
-        df = pd.read_hdf(args.dataset_filename, key='speed')
+        x, y = kiglis2df(args.dataset_filename) 
+
     else:
         df = pd.read_csv(args.dataset_filename, delimiter = ",", header=None)
         if args.ds_name == "traffic":

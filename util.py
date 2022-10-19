@@ -317,7 +317,7 @@ def plot_seq(df: pd.DataFrame, ds_name: str):
     """plot sequence data for visualization"""
     # df = px.data.stocks()
     # TODO transform the format 
-    if ds_name == "metr-la" or "Pems_Bay":
+    if ds_name == "metr-la" or ds_name == "Pems_Bay":
     
         df_dict = {}
         for i in range(df.shape[1]):
@@ -335,14 +335,17 @@ def plot_seq(df: pd.DataFrame, ds_name: str):
             # ticklabelmode="period")
         fig.show()
     
-    if ds_name == "electricity" or 'solar-energy':
+    if ds_name == "electricity" or ds_name == 'solar-energy':
         fig = px.line(df, x=df.index, y=df.columns[:3],
                     title=ds_name)
         fig.show()
 
-    if ds_name == "traffic" or "ECG":
+    if ds_name == "traffic" or ds_name == "ECG":
         fig = px.line(df, x=df.index, y=df.columns[:3],
                     title=ds_name)
         fig.show()
-
+    if ds_name == "kiglis":
+        fig = px.line(df, x= df.index , y=df.columns,
+                    title=ds_name)
+        fig.show()
     return 
