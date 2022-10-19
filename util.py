@@ -327,7 +327,7 @@ def plot_seq(df: pd.DataFrame, ds_name: str):
         df1 = pd.DataFrame(data=df_dict, dtype=np.float64)
 
 
-        fig = px.line(df1, x= 'index', y="0",
+        fig = px.line(df1, x= 'index', y="Sensor0",
                     title=' average traffic speed')
         # fig.update_xaxes(
             # dtick="M1",
