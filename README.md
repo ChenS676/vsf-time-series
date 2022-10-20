@@ -1,5 +1,10 @@
 Code for the paper - [Multi-Variate Time Series Forecasting on Variable Subsets]() accepted at KDD 2022 Research Track.
 
+# ToDo List
+- metr-la， ecg,  exchange rate, solar energy dataset doesn't work with script "train_multi_step"
+- pems_bay too 
+- already works datasets: traffic, solar-energy, electricity, metr-la
+
 
 # Download dataset 
 Multivariate time series datasets
