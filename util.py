@@ -17,7 +17,7 @@ from torch.autograd import Variable
 import networkx as nx
 import time
 import plotly.express as px
-
+# TODO what does number of nodes mean? 
 def normal_std(x):
     return x.std() * np.sqrt((len(x) - 1.)/(len(x)))
 

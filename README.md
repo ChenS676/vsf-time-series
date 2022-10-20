@@ -4,7 +4,7 @@ Code for the paper - [Multi-Variate Time Series Forecasting on Variable Subsets]
 - metr-la， ecg,  exchange rate, solar energy dataset doesn't work with script "train_multi_step"
 - pems_bay too 
 - already works datasets: traffic, solar-energy, electricity, metr-la
-
+- Adapt current train script into kiglis, what is num_dim and utw. 
 
 # Download dataset 
 Multivariate time series datasets
