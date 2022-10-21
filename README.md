@@ -5,6 +5,8 @@ Code for the paper - [Multi-Variate Time Series Forecasting on Variable Subsets]
 - pems_bay too 
 - already works datasets: traffic, solar-energy, electricity, metr-la
 - Adapt current train script into kiglis, what is num_dim and utw. 
+- add information print to visualize the architecture of the model 
+
 
 # Download dataset 
 Multivariate time series datasets
@@ -149,10 +151,19 @@ python train_multi_step.py --data ./data/traffic --model_name mtgnn --device cud
 | ----------- | ----------- |
 | ----------- | ----------- |
 
+https://github.com/nnzhan/MTGNN 
 
+https://ojs.aaai.org/index.php/AAAI/article/view/3881 
 
 
 ## R eferences
 https://github.com/liyaguang/DCRNN 
 
 https://github.com/microsoft/StemGNN 
+
+
+[16] Modeling Long and Short-Term Temporal Patterns with Deep Neural Networks git@github.com:laiguokun/LSTNet.git
+
+[8] Attention Based Spatial-Temporal Graph Convolutional Networks for Traffic Flow Forecasting (ASTGCN) https://github.com/guoshnBJTU/ASTGCN-r-pytorch
+
+[25] Connecting the Dots: Multivariate Time Series Forecasting with Graph Neural Network 
