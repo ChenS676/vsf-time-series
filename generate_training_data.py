@@ -102,11 +102,11 @@ def kiglis2df(dataset_filename : str):
     # t is the index of the last observation.
     min_t = abs(min(x_offsets)) 
     max_t = abs(length_samples - abs(max(x_offsets)))  # Exclusive
-    x_dataset, y_dataset = np.zeros((max_t - min_t, 12, num_samples)), np.zeros((max_t - min_t, 12, num_samples))
+    x_dataset, y_dataset = np.zeros((max_t - min_t, 12, num_samples, 1)), np.zeros((max_t - min_t, 12, num_samples, 1))
     for n in range( num_samples):
         for t in range(min_t, max_t):
-            x_dataset[t - min_t, :, n] = x_data[n, t + x_offsets].astype(np.float32)
-            y_dataset[t - min_t, :, n] = y_data[n, t + x_offsets].astype(np.float32)
+            x_dataset[t - min_t, :, n, 0] = x_data[n, t + x_offsets].astype(np.float32)
+            y_dataset[t - min_t, :, n, 0] = y_data[n, t + x_offsets].astype(np.float32)
         # print(f"x_dataset[{t - min_t,} :, {n}] = x_data[{n}, {min(t+x_offsets)}:{max(t+x_offsets)}]")
         # print(f"x_dataset[{t - min_t,} :, {n}], x_dataset.shape {x_dataset.shape}")
     print("x shape: ", x_dataset.shape, ", y shape: ", y_dataset.shape)
@@ -128,7 +128,8 @@ def kiglis2df(dataset_filename : str):
     # test
     x_test, y_test = x_dataset[-num_test:], y_dataset[-num_test:]
 
-    os.mkdir(args.output_dir)
+    if not os.path.exists(args.output_dir):
+        os.mkdir(args.output_dir)
         
     for cat in ["train", "val", "test"]:
         _x, _y = locals()["x_" + cat], locals()["y_" + cat]
