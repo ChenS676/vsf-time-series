@@ -132,7 +132,7 @@ python generate_training_data.py --ds_name data/traffic  --output_dir data/traff
 
 python generate_training_data.py --ds_name metr-la  --output_dir data/metr-la --dataset_filename data/metr-la/metr-la.h5
 
-
+python generate_training_data.py --ds_name kiglis --output_dir data/kiglis/CD/kiglis_data_7km --dataset_filename data/kiglis/CD/kiglis_data_7km.hdf5
 
 
 python train_multi_step.py --data ./data/electricity --model_name mtgnn --device cuda:0 --expid 3242 --epochs 100 --batch_size 64 --runs 10 --random_node_idx_split_runs 100 --lower_limit_random_node_selections 15 --upper_limit_random_node_selections 15 --step_size1 1000 --mask_remaining true

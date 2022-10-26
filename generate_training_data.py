@@ -90,49 +90,43 @@ def kiglis2df(dataset_filename : str):
                 x_data.append(f[key]['mx_flt']['input']['signals']['0'][:].squeeze())
                 y_data.append(f[key]['mx_flt']['output']['signals']['0'][:].squeeze())
     
-    x_data, y_data = np.swapaxes(np.array(x_data), 0, 1), np.swapaxes(np.array(y_data), 0, 1)
+    x_data, y_data = np.array(x_data), np.array(y_data)
+    print(f"shape of x raw data is {x_data.shape}")
     # 0 is the latest observed sample.
     x_offsets = np.sort(
         np.concatenate((np.arange(-11, 1, 1),))
     )
     num_samples = np.array(x_data).shape[0]
-    x, y = [], []
-    # t is the index of the last observation.
-    min_t = abs(min(x_offsets))
-    max_t = abs(num_samples - abs(max(x_offsets)))  # Exclusive
-    for t in range(min_t, max_t):
-        x_t = x_data[t + x_offsets, ...].astype(np.float32)
-        y_t = y_data[t + x_offsets, ...].astype(np.float32)
-        x.append(x_t)
-        y.append(y_t)
-    x = np.stack(x, axis=0).swapaxes(1, 2).reshape(-1, 12)
-    y = np.stack(y, axis=0).swapaxes(1, 2).reshape(-1, 12)
+    length_samples = np.array(x_data).shape[1]
 
-    # create a df for plot 
-    df_dict = {}
-    df_dict.update({'x': x[0, :]})
-    df_dict.update({'y': y[0, :]})
-    df = pd.DataFrame(df_dict)
-    # save dataset into zip file 
-    plot_seq(df, args.ds_name)
-    print("x shape: ", x.shape, ", y shape: ", y.shape)
+    # t is the index of the last observation.
+    min_t = abs(min(x_offsets)) 
+    max_t = abs(length_samples - abs(max(x_offsets)))  # Exclusive
+    x_dataset, y_dataset = np.zeros((max_t - min_t, 12, num_samples)), np.zeros((max_t - min_t, 12, num_samples))
+    for n in range( num_samples):
+        for t in range(min_t, max_t):
+            x_dataset[t - min_t, :, n] = x_data[n, t + x_offsets].astype(np.float32)
+            y_dataset[t - min_t, :, n] = y_data[n, t + x_offsets].astype(np.float32)
+        # print(f"x_dataset[{t - min_t,} :, {n}] = x_data[{n}, {min(t+x_offsets)}:{max(t+x_offsets)}]")
+        # print(f"x_dataset[{t - min_t,} :, {n}], x_dataset.shape {x_dataset.shape}")
+    print("x shape: ", x_dataset.shape, ", y shape: ", y_dataset.shape)
     # Write the data into npz file.
     # num_test = 6831, using the last 6831 examples as testing.
     # for the rest: 7/8 is used for training, and 1/8 is used for validation.
-    num_samples = x.shape[0]
+    num_samples = x_dataset.shape[0]
     num_test = round(num_samples * 0.2)
     num_train = round(num_samples * 0.7)
     num_val = num_samples - num_test - num_train
 
     # train
-    x_train, y_train = x[:num_train], y[:num_train]
+    x_train, y_train = x_dataset[:num_train], y_dataset[:num_train]
     # val
     x_val, y_val = (
-        x[num_train: num_train + num_val],
-        y[num_train: num_train + num_val],
+        x_dataset[num_train: num_train + num_val],
+        y_dataset[num_train: num_train + num_val],
     )
     # test
-    x_test, y_test = x[-num_test:], y[-num_test:]
+    x_test, y_test = x_dataset[-num_test:], y_dataset[-num_test:]
 
     os.mkdir(args.output_dir)
         
@@ -147,7 +141,7 @@ def kiglis2df(dataset_filename : str):
             x_offsets=x_offsets.reshape(list(x_offsets.shape) + [1]),
             y_offsets=x_offsets.reshape(list(x_offsets.shape) + [1]),
         )
-    return x, y
+    return x_dataset, y_dataset
 
 def generate_train_val_test(args):
     if args.ds_name == "metr-la":
@@ -178,19 +172,19 @@ def generate_train_val_test(args):
         add_time_in_day = True
     else:
         add_time_in_day = False
-    x, y = generate_graph_seq2seq_io_data(
-        df,
-        x_offsets=x_offsets,
-        y_offsets=y_offsets,
-        add_time_in_day=add_time_in_day,
-        add_day_in_week=False,
-    )
+    if args.ds_name != 'kiglis':
+        x, y = generate_graph_seq2seq_io_data(
+            df,
+            x_offsets=x_offsets,
+            y_offsets=y_offsets,
+            add_time_in_day=add_time_in_day,
+            add_day_in_week=False,
+        )
 
-    plot_seq(df, args.ds_name)
+    # plot_seq(df, args.ds_name)
     print("x shape: ", x.shape, ", y shape: ", y.shape)
     # Write the data into npz file.
-    # num_test = 6831, using the last 6831 examples as testing.
-    # for the rest: 7/8 is used for training, and 1/8 is used for validation.
+
     num_samples = x.shape[0]
     num_test = round(num_samples * 0.2)
     num_train = round(num_samples * 0.7)
