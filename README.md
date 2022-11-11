@@ -156,7 +156,7 @@ https://github.com/nnzhan/MTGNN
 https://ojs.aaai.org/index.php/AAAI/article/view/3881 
 
 
-## R eferences
+## References
 https://github.com/liyaguang/DCRNN 
 
 https://github.com/microsoft/StemGNN 
