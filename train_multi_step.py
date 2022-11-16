@@ -214,7 +214,7 @@ def main(runid):
                 print(log.format(iter, train_loss[-1], train_rmse[-1]),flush=True)
         t2 = time.time()
         train_time.append(t2-t1)
-        #validation
+        # validation
         valid_loss = []
         valid_rmse = []
 
